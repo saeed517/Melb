@@ -1,0 +1,25 @@
+/* add your CSS here */
+.lion1 {
+    font-weight: bold;
+}
+
+.nodot {
+  list-style-type: none;
+  padding: 0px;
+}
+.border {
+border-style: solid;
+width: 300px;
+padding: 5px;
+margin-top: 10px;
+}
+.broder1{
+border-style: solid;
+width: 280px;
+padding: 5px;
+margin-top: 10px;
+}
+
+.itilic{
+    font-style: italic;
+}
