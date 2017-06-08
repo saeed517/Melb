@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Riyadh Neighborhood Map</title>
+  <meta name="description" content="Neighborhood Map">
+  <meta name="author" content="Saeed Alqahtani">
+  <meta name="viewport" content="width=device-width">
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD66VY78WBNPsvhYujsJK2uacxLVPfWpRo">
+  </script>
+  <script src="js/knockout.js"></script>
+  <script src="js/jquery.js"></script> 
+  <!-- <script src="js/aouth.js"></script> -->
+  <script src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+  <script src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+  
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="title-outer col-xs-12">
+      <div class="row">
+        <div class="titlebar col-xs-12">
+          <h2>Riyadh Neighborhood Map</h2>
+          <h4>Best Coffee Shop in Riyadh</h4>
+          <div>Find Your Location: <input class="search-field" data-bind="textInput: searchReq"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="map-outer col-xs-12">
+      <div class="row">
+        <div class="sidebar col-xs-4">
+          <p>List of Locations:</p>
+          <div class="loc-list" data-bind="foreach: filteredMarkers">
+            <button data-bind="text: title, click: myMarkers.toggleBounce"></button><br>
+          </div>
+        </div> 
+
+        <div class="map-container col-xs-8"> </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
