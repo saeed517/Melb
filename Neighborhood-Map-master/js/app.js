@@ -93,6 +93,7 @@ var resultMarkers = function(members){
     zoom: 14
 };
 
+
 var mapCont = document.getElementsByClassName('map-container');
 
 self.map = new google.maps.Map(mapCont[0], self.mapOptions);
@@ -114,18 +115,19 @@ self.map = new google.maps.Map(mapCont[0], self.mapOptions);
     	var catSearch = a.category.toLowerCase().indexOf(self.searchReq().toLowerCase());
     	return ((titleSearch > -1 || catSearch > -1) && a.status() === 'OK');
     });
-    //Iterate through results, set animation timeout for each
-    var len = arrayResults.length;
-    for (var i = 0; i < len; i++){
-    	(function f(){
-    		var current = i;
-    		var animTimer = setTimeout(function(){arrayResults[current].marker.setMap(self.map);}, i * 300);
-    		arrayResults[current].timer = animTimer;
-    	}());
-    }
+    // //Iterate through results, set animation timeout for each
+    // var len = arrayResults.length;
+    // for (var i = 0; i < len; i++){
+    // 	(function f(){
+    // 		var current = i;
+    // 		var animTimer = setTimeout(function(){arrayResults[current].marker.setMap(self.map);}, i * 300);
+    // 		arrayResults[current].timer = animTimer;
+    // 	}());
+    // }
     //Return list of locations that match search request, for button list
     return arrayResults;
 });
+
 
 //Adds infowindows to each marker and populates them with Foursquare API request data
 self.setBubble = function(index){
@@ -158,18 +160,18 @@ self.setBubble = function(index){
     		location.marker.position = results[0].geometry.location;
     		location.marker.setAnimation(google.maps.Animation.DROP);
     	} else if (status === 'OVER_QUERY_LIMIT'){
-        console.log("in over limit"); // If status is OVER_QUERY_LIMIT, then wait and re-request
+        // console.log("in over limit"); // If status is OVER_QUERY_LIMIT, then wait and re-request
         setTimeout(function(){
         	geocoder.geocode({ 'address': location.address }, function(results, status) {
         		location.marker.position = results[0].geometry.location;
-        		location.marker.setAnimation(google.maps.Animation.DROP);
+        		// location.marker.setAnimation(google.maps.Animation.DROP);
         	});
         }, 2000);
 
     } else {
         //If status is any other error code, then set status to Error, which will remove it from list and map
         location.status('ERROR');
-        console.log('Error code: ', status, 'for Location:', location.title);
+        // console.log('Error code: ', status, 'for Location:', location.title);
     }
 });
 };
@@ -188,7 +190,7 @@ self.toggleBounce = function(currentMarker) {
 		currentMarker.marker.setAnimation(null);
 	} else {
       self.map.setCenter(currentMarker.marker.position); //center map on bouncing marker
-      currentMarker.marker.setAnimation(google.maps.Animation.BOUNCE);
+      // currentMarker.marker.setAnimation(google.maps.Animation.BOUNCE);
       setTimeout(function(){currentMarker.marker.setAnimation(null);}, 2800); //bounce for 2800 ms
   }
 };
@@ -196,4 +198,7 @@ self.toggleBounce = function(currentMarker) {
 
 var myMarkers = new resultMarkers(markersModel);
 ko.applyBindings(myMarkers);
-google.maps.event.addDomListener(window, 'load', myMarkers.initialize);
+// google.maps.event.addDomListener(window, 'load', myMarkers.initialize);
+
+
+
