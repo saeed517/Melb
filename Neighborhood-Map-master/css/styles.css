@@ -1,3 +1,10 @@
+html,
+body,
+.map-container,
+#map {
+  height: 100%;
+}
+
 body {
   background-color: #ccc;
   height: 100%
