@@ -1,13 +1,7 @@
-"use strict";
-
-//Error handling - checks if Google Maps has loaded
-// if (!window.google || !window.google.maps) {
-//   $('#map-container').text('Error: Google Maps data could not be loaded');
-//   $('#map-list').text('Error: Google Maps data could not be loaded');
-// }
+//"use strict";
 
 function googleError() {
-  alert("Google Maps did not load");
+  alert('Google Maps did not load');
 }
 
 // ----- MODEL -----
@@ -70,34 +64,12 @@ var ResultMarkers = function(members) {
   var mapCont = document.getElementsByClassName('map-container');
   
   self.searchReq = ko.observable(''); //user input to Search box
-  // Filtered version of data model, based on Search input
-  //   self.filteredMarkers = ko.computed(function() {
-  //     //Remove all markers from map
-  //     var len = members.length;
-  //     for (var i = 0; i < len; i++) {
-  //      members[i].marker.setMap(null);
-  //      clearTimeout(members[i].timer);
-  //     }
-  //     //Place only the markers that match search request
-      // var arrayResults = [];
-      // arrayResults =  $.grep(members, function(a) {
-      //  var titleSearch = a.title.toLowerCase().indexOf(self.searchReq().toLowerCase());
-      //  var catSearch = a.category.toLowerCase().indexOf(self.searchReq().toLowerCase());
-      //  return ((titleSearch > -1 || catSearch > -1) && a.status() === 'OK');
-      // });
-  //     // //Iterate through results, set animation timeout for each
-  //     var len = arrayResults.length;
-  //     for (var i = 0; i < len; i++){
-  //       (function f(){
-  //         var current = i;
-  //         var animTimer = setTimeout(function(){arrayResults[current].marker.setMap(self.map);}, i * 300);
-  //         arrayResults[current].timer = animTimer;
-  //       }());
-  //     }
-  //     //Return list of locations that match search request, for button list
-  //     return arrayResults;
-  // });
+  // use the self.searchReq() observable to filter the cafes observabeArray's cafe objects
+  // http://w...content-available-to-author-only...t.net/2011/04/utility-functions-in-knockoutjs.html
+  // http://o...content-available-to-author-only...l.org/2011/06/23/live-search-with-knockoutjs/
+  // return a matching subset of cafe objects
 
+  // Filtered version of data model, based on Search input
   self.filteredMarkers = ko.computed(function() {
     var filter = self.searchReq().toLowerCase();
     // if there is no filter
@@ -120,37 +92,7 @@ var ResultMarkers = function(members) {
         return result;
       });
     }
-    // use the self.searchReq() observable to filter the cafes observabeArray's cafe objects
-    // http://w...content-available-to-author-only...t.net/2011/04/utility-functions-in-knockoutjs.html
-    // http://o...content-available-to-author-only...l.org/2011/06/23/live-search-with-knockoutjs/
-    // return a matching subset of cafe objects
   });    
-
-
-  //Adds infowindows to each marker and populates them with Foursquare API request data
-  // self.setBubble = function(index) {
-  //   console.log('test');
-  //   //Add event listener to each map marker to trigger the corresponding infowindow on click
-  //   google.maps.event.addListener(members[index].marker, 'click', function() {
-
-  //     //Request Foursquare info, then format it, and place it in infowindow
-  //     FoursquareRequest(members[index].phone, function(data) {
-  //       console.log('here');
-
-  //       var contentString = "<div id='Window'>" +
-  //       "<h5>" + "<a href='" + data.mobile_url + "' target='_blank'>" + data.name + "</a>" + "</h5>" +
-  //       "<p>" + data.location.address + "</p>" +
-  //       "<p>" + data.display_phone + "</p>" +
-  //       "<img src='" + data.rating_img_url_large + "'>" +
-  //       "<p>" + data.snippet_text + "</p>" +
-  //       "</div>";
-  //       self.infowindow.setContent(contentString);
-  //     });
-  //     console.log('here');
-
-  //     self.infowindow.open(self.map, members[index].marker);
-  //   });
-  // };
 
   //Use street address in model to find LatLng
   self.setPosition = function(location) {
@@ -256,6 +198,9 @@ ResultMarkers.prototype.initMap = function() {
         "<p>" + phone + "</p>" +
         "</div>";
       self.infowindow.setContent(contentString);
+    },
+    error: function(e) {
+    console.log(e)
     }
   });
 });
