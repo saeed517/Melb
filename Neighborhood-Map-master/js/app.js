@@ -10,57 +10,56 @@ function googleError() {
   alert("Google Maps did not load");
 }
 
-
 // ----- MODEL -----
 
 var markersModel = [{
-    title: "White Foam Cafe",
-    category: "coffee",
-    address: "2956 Ash Shaikh Abdullah Al Anqari, Salah Ad Din, 24.729777, 46.694475، Riyadh 12434",
-    phone: "011 470 8567",
-    status: ko.observable("OK"),
-    position: { lat:  24.729777, lng: 46.694475}
-  },
-  {
-    title: "DR CAFE Coffee",
-    category: "coffee",
-    address: "Prince Sultan Bin Abdulaziz Rd, Al Olaya, Riyadh 13935",
-    phone: "059 482 8363",
-    status: ko.observable("OK"),
-    position: { lat: 24.688984, lng: 46.685024}
-  },
-  {
-    title: "French Bakery",
-    category: "coffee",
-    address: "Takhassusi St, Al Olaya, Riyadh 12331",
-    phone: "011 464 1441",
-    status: ko.observable("OK"),
-    position: { lat: 24.695242, lng: 46.670388}
-  },
-  {
-    title: "Bateel Cafe",
-    category: "coffee",
-    address: "Olaya St, Al Olaya, Riyadh 12213",
-    phone: "050 558 6690",
-    status: ko.observable("OK"),
-    position: { lat: 24.700234, lng: 46.681920}
-  },
-  {
-    title: "Capio Diem",
-    category: "coffee",
-    address: "13243 Khalid Ibn Al Walid St, Al Quds, Riyadh 13214",
-    phone: "011 321 3211",
-    status: ko.observable("OK"),
-    position: { lat: 24.767499, lng: 46.759363}
-  },
+  title: "White Foam Cafe",
+  category: "coffee",
+  address: "2956 Ash Shaikh Abdullah Al Anqari, Salah Ad Din, 24.729777, 46.694475، Riyadh 12434",
+  phone: "011 470 8567",
+  status: ko.observable("OK"),
+  position: { lat:  24.729777, lng: 46.694475}
+},
+{
+  title: "DR CAFE Coffee",
+  category: "coffee",
+  address: "Prince Sultan Bin Abdulaziz Rd, Al Olaya, Riyadh 13935",
+  phone: "059 482 8363",
+  status: ko.observable("OK"),
+  position: { lat: 24.688984, lng: 46.685024}
+},
+{
+  title: "French Bakery",
+  category: "coffee",
+  address: "Takhassusi St, Al Olaya, Riyadh 12331",
+  phone: "011 464 1441",
+  status: ko.observable("OK"),
+  position: { lat: 24.695242, lng: 46.670388}
+},
+{
+  title: "Bateel Cafe",
+  category: "coffee",
+  address: "Olaya St, Al Olaya, Riyadh 12213",
+  phone: "050 558 6690",
+  status: ko.observable("OK"),
+  position: { lat: 24.700234, lng: 46.681920}
+},
+{
+  title: "Capio Diem",
+  category: "coffee",
+  address: "13243 Khalid Ibn Al Walid St, Al Quds, Riyadh 13214",
+  phone: "011 321 3211",
+  status: ko.observable("OK"),
+  position: { lat: 24.767499, lng: 46.759363}
+},
 ];
 //---- VIEWMODEL ----
 
 // Foursquare API Url parameters in global scope
-var BaseUrl = "https://api.foursquare.com/v2/venues/",
-  fsClient_id = "XRSEP0C0TKGAHTTLWOOFIUY51ADVSQS1AI5P1JZWDFWMDK1E",
-  fsClient_secret = "43RMOGHZ1MZPU0ED0QH1Z3EP3VSCG04N3XE3BGHKKWUY25NI",
-  fsVersion = "&v=20161507";
+var BaseUrl = "https://api.foursquare.com/v2/venues/search",
+fsClient_id = "XRSEP0C0TKGAHTTLWOOFIUY51ADVSQS1AI5P1JZWDFWMDK1E",
+fsClient_secret = "43RMOGHZ1MZPU0ED0QH1Z3EP3VSCG04N3XE3BGHKKWUY25NI",
+fsVersion = "20161507";
 
 
 var ResultMarkers = function(members) {
@@ -69,6 +68,7 @@ var ResultMarkers = function(members) {
   self.myCafes = ko.observableArray(markersModel);
 
   var mapCont = document.getElementsByClassName('map-container');
+  
   self.searchReq = ko.observable(''); //user input to Search box
   // Filtered version of data model, based on Search input
   //   self.filteredMarkers = ko.computed(function() {
@@ -79,12 +79,12 @@ var ResultMarkers = function(members) {
   //      clearTimeout(members[i].timer);
   //     }
   //     //Place only the markers that match search request
-  //     var arrayResults = [];
-  //     arrayResults =  $.grep(members, function(a) {
-  //      var titleSearch = a.title.toLowerCase().indexOf(self.searchReq().toLowerCase());
-  //      var catSearch = a.category.toLowerCase().indexOf(self.searchReq().toLowerCase());
-  //      return ((titleSearch > -1 || catSearch > -1) && a.status() === 'OK');
-  //     });
+      // var arrayResults = [];
+      // arrayResults =  $.grep(members, function(a) {
+      //  var titleSearch = a.title.toLowerCase().indexOf(self.searchReq().toLowerCase());
+      //  var catSearch = a.category.toLowerCase().indexOf(self.searchReq().toLowerCase());
+      //  return ((titleSearch > -1 || catSearch > -1) && a.status() === 'OK');
+      // });
   //     // //Iterate through results, set animation timeout for each
   //     var len = arrayResults.length;
   //     for (var i = 0; i < len; i++){
@@ -99,30 +99,58 @@ var ResultMarkers = function(members) {
   // });
 
   self.filteredMarkers = ko.computed(function() {
-    return self.myCafes();
-  });
+    var filter = self.searchReq().toLowerCase();
+    // if there is no filter
+    if (!filter) {
+      self.myCafes().forEach(function(marker){
+        marker.status('true');
+        if (marker.marker) {
+          marker.marker.setVisible(true);
+        }
+      });
+      return self.myCafes();
+
+    // if there is a filter
+    } else {
+      return ko.utils.arrayFilter(self.myCafes(), function(marker) {
+        var string = marker.title.toLowerCase();
+        var result = (string.search(filter) >= 0);
+        marker.status(result);
+        marker.marker.setVisible(result);
+        return result;
+      });
+    }
+    // use the self.searchReq() observable to filter the cafes observabeArray's cafe objects
+    // http://w...content-available-to-author-only...t.net/2011/04/utility-functions-in-knockoutjs.html
+    // http://o...content-available-to-author-only...l.org/2011/06/23/live-search-with-knockoutjs/
+    // return a matching subset of cafe objects
+  });    
+
 
   //Adds infowindows to each marker and populates them with Foursquare API request data
-  self.setBubble = function(index) {
-    //Add event listener to each map marker to trigger the corresponding infowindow on click
-    google.maps.event.addListener(members[index].marker, 'click', function() {
+  // self.setBubble = function(index) {
+  //   console.log('test');
+  //   //Add event listener to each map marker to trigger the corresponding infowindow on click
+  //   google.maps.event.addListener(members[index].marker, 'click', function() {
 
-      //Request Foursquare info, then format it, and place it in infowindow
-      FoursquareRequest(members[index].phone, function(data) {
+  //     //Request Foursquare info, then format it, and place it in infowindow
+  //     FoursquareRequest(members[index].phone, function(data) {
+  //       console.log('here');
 
-        var contentString = "<div id='Window'>" +
-          "<h5>" + "<a href='" + data.mobile_url + "' target='_blank'>" + data.name + "</a>" + "</h5>" +
-          "<p>" + data.location.address + "</p>" +
-          "<p>" + data.display_phone + "</p>" +
-          "<img src='" + data.rating_img_url_large + "'>" +
-          "<p>" + data.snippet_text + "</p>" +
-          "</div>";
-        self.infowindow.setContent(contentString);
-      });
+  //       var contentString = "<div id='Window'>" +
+  //       "<h5>" + "<a href='" + data.mobile_url + "' target='_blank'>" + data.name + "</a>" + "</h5>" +
+  //       "<p>" + data.location.address + "</p>" +
+  //       "<p>" + data.display_phone + "</p>" +
+  //       "<img src='" + data.rating_img_url_large + "'>" +
+  //       "<p>" + data.snippet_text + "</p>" +
+  //       "</div>";
+  //       self.infowindow.setContent(contentString);
+  //     });
+  //     console.log('here');
 
-      self.infowindow.open(self.map, members[index].marker);
-    });
-  };
+  //     self.infowindow.open(self.map, members[index].marker);
+  //   });
+  // };
 
   //Use street address in model to find LatLng
   self.setPosition = function(location) {
@@ -163,15 +191,7 @@ var ResultMarkers = function(members) {
 
   //Toggle bounce animation for map marker on click of Location list button (via data-binding)
   self.toggleBounce = function(currentMarker) {
-    if (currentMarker.marker.getAnimation() !== null) {
-      currentMarker.marker.setAnimation(null);
-    } else {
-      self.map.setCenter(currentMarker.marker.position); //center map on bouncing marker
-      // currentMarker.marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function() {
-        currentMarker.marker.setAnimation(null);
-      }, 2800); //bounce for 2800 ms
-    }
+    google.maps.event.trigger(currentMarker.marker, 'click');
   };
 };
 
@@ -184,6 +204,7 @@ ResultMarkers.prototype.initMap = function() {
   };
 
   self.map = new google.maps.Map(document.getElementById("map"), self.mapOptions);
+
 
   self.myCafes().forEach(function(cafe) {
     var marker = new google.maps.Marker({
@@ -202,9 +223,43 @@ ResultMarkers.prototype.initMap = function() {
     marker.addListener('click', function() {
       self.infowindow.setContent('<h4>' + marker.title + '</h4>');
       self.infowindow.open(self.map, marker);
-    });
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function() {
+        marker.setAnimation(null);
+      }, 2100);
+  // Ajax request url
+  var url = BaseUrl;
+  // Configuration of the ajax request
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    data: {
+      client_id: fsClient_id,
+      client_secret: fsClient_secret,
+      v: fsVersion,
+      near: "Riyadh",
+      async: true,
+      query: cafe.marker.title
+    },
+    success: function(data) {
+      console.log(data);
+      var locationData = data.response.venues[0];
+      var phone;
+      if (locationData.contact.formattedPhone) {
+        phone = locationData.contact.formattedPhone;
+      } else {
+        phone = 'Phone Number Not Available';
+      }
+      var contentString = "<div id='Window'>" +
+        "<h5>" + locationData.name + "</h5>" +
+        "<p>" + locationData.location.address + "</p>" +
+        "<p>" + phone + "</p>" +
+        "</div>";
+      self.infowindow.setContent(contentString);
+    }
   });
-
+});
+  });
 };
 
 var myMarkers = new ResultMarkers(markersModel);
