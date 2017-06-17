@@ -83,16 +83,16 @@ var ResultMarkers = function(members) {
       return self.myCafes();
 
     // if there is a filter
-    } else {
-      return ko.utils.arrayFilter(self.myCafes(), function(marker) {
-        var string = marker.title.toLowerCase();
-        var result = (string.search(filter) >= 0);
-        marker.status(result);
-        marker.marker.setVisible(result);
-        return result;
-      });
-    }
-  });    
+  } else {
+    return ko.utils.arrayFilter(self.myCafes(), function(marker) {
+      var string = marker.title.toLowerCase();
+      var result = (string.search(filter) >= 0);
+      marker.status(result);
+      marker.marker.setVisible(result);
+      return result;
+    });
+  }
+});    
 
   //Use street address in model to find LatLng
   self.setPosition = function(location) {
@@ -193,20 +193,20 @@ ResultMarkers.prototype.initMap = function() {
         phone = 'Phone Number Not Available';
       }
       var contentString = "<div id='Window'>" +
-        "<h5>" + locationData.name + "</h5>" +
-        "<p>" + locationData.location.address + "</p>" +
-        "<p>" + phone + "</p>" +
-        "</div>";
+      "<h5>" + locationData.name + "</h5>" +
+      "<p>" + locationData.location.address + "</p>" +
+      "<p>" + phone + "</p>" +
+      "</div>";
       self.infowindow.setContent(contentString);
     },
-    error: function(e) {
-    console.log(e)
-    }
-  });
+    error: function() {
+    // console.log(e)
+    alert('Foursquare data is unavailable. Please try refreshing later.');
+  }
+});
 });
   });
 };
 
 var myMarkers = new ResultMarkers(markersModel);
 ko.applyBindings(myMarkers);
-// google.maps.event.addDomListener(window, 'load', myMarkers.initialize);
